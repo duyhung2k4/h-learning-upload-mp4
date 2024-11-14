@@ -1,0 +1,32 @@
+package request
+
+import (
+	"app/constant"
+)
+
+type QueryReq[T any] struct {
+	Data      T                   `json:"data"`
+	Datas     []T                 `json:"datas"`
+	Args      []interface{}       `json:"args"`
+	Condition string              `json:"condition"`
+	Preload   []string            `json:"preload"`
+	Omit      map[string][]string `json:"omit"`
+	Method    constant.METHOD     `json:"method"`
+	Order     string              `json:"order"`
+	Unscoped  bool                `json:"unscoped"`
+}
+
+type FindPayload struct {
+	Condition string
+	Preload   []string
+	Omit      map[string][]string
+	Order     string
+	Agrs      []interface{}
+}
+
+type FirstPayload struct {
+	Condition string
+	Preload   []string
+	Omit      map[string][]string
+	Agrs      []interface{}
+}
