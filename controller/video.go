@@ -43,17 +43,28 @@ func (c *videoController) Upload(w http.ResponseWriter, r *http.Request) {
 	listErr := []error{}
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
-	wg.Add(1)
 
-	go func() {
-		defer wg.Done()
-		err := c.videoService.SendMessQueueQuantity(constant.QUEUE_MP4_360_P, videoPayload.Uuid)
-		if err != nil {
-			mutex.Lock()
-			listErr = append(listErr, err)
-			mutex.Unlock()
-		}
-	}()
+	queues := []constant.QUEUE_QUANTITY{
+		constant.QUEUE_MP4_360_P,
+		constant.QUEUE_MP4_480_P,
+		constant.QUEUE_MP4_720_P,
+		constant.QUEUE_MP4_1080_P,
+	}
+
+	for _, q := range queues {
+		wg.Add(1)
+		go func(q constant.QUEUE_QUANTITY) {
+			defer wg.Done()
+			log.Println(q)
+			err := c.videoService.SendMessQueueQuantity(q, videoPayload.Uuid)
+			if err != nil {
+				mutex.Lock()
+				listErr = append(listErr, err)
+				mutex.Unlock()
+			}
+		}(q)
+	}
+
 	wg.Wait()
 
 	if len(listErr) > 0 {

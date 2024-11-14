@@ -46,11 +46,12 @@ func (s *videoService) CreateVideo(payload request.InfoVideo, r *http.Request) e
 }
 
 func (s *videoService) SendMessQueueQuantity(queue constant.QUEUE_QUANTITY, uuidVideo string) error {
-	path := fmt.Sprintf("video/%s.mp4", uuidVideo)
-	ipServer := fmt.Sprintf("http://%s:%s", config.GetAppHost(), config.GetAppPort())
+	path := fmt.Sprintf("%s.mp4", uuidVideo)
+	ipServer := fmt.Sprintf("http://%s:%s/api/v1/video", config.GetAppHost(), config.GetAppPort())
 
 	payload := queuepayload.QueueMp4QuantityPayload{
 		Path:     path,
+		Uuid:     uuidVideo,
 		IpServer: ipServer,
 	}
 
