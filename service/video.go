@@ -21,6 +21,7 @@ type videoService struct {
 
 type VideoService interface {
 	CreateVideo(payload request.InfoVideo, r *http.Request) error
+	DeleteVideoMp4(payload queuepayload.QueueFileDeleteMp4) error
 	SendMessQueueQuantity(queue constant.QUEUE_QUANTITY, uuidVideo string) error
 }
 
@@ -43,6 +44,15 @@ func (s *videoService) CreateVideo(payload request.InfoVideo, r *http.Request) e
 	_, err = io.Copy(outFile, file)
 
 	return err
+}
+
+func (s *videoService) DeleteVideoMp4(payload queuepayload.QueueFileDeleteMp4) error {
+	path := fmt.Sprintf("video/%s.mp4", payload.Uuid)
+	err := os.RemoveAll(path)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *videoService) SendMessQueueQuantity(queue constant.QUEUE_QUANTITY, uuidVideo string) error {
