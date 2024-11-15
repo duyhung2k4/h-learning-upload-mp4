@@ -46,9 +46,9 @@ func (c *videoController) Upload(w http.ResponseWriter, r *http.Request) {
 
 	queues := []constant.QUEUE_QUANTITY{
 		constant.QUEUE_MP4_360_P,
-		constant.QUEUE_MP4_480_P,
-		constant.QUEUE_MP4_720_P,
-		constant.QUEUE_MP4_1080_P,
+		// constant.QUEUE_MP4_480_P,
+		// constant.QUEUE_MP4_720_P,
+		// constant.QUEUE_MP4_1080_P,
 	}
 
 	for _, q := range queues {
