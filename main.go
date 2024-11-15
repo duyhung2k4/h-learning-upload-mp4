@@ -2,7 +2,6 @@ package main
 
 import (
 	"app/config"
-	"app/queue"
 	"app/router"
 	"log"
 	"net/http"
@@ -11,12 +10,7 @@ import (
 
 func main() {
 	var wg sync.WaitGroup
-	wg.Add(2)
-
-	go func() {
-		defer wg.Done()
-		queue.InitQueue()
-	}()
+	wg.Add(1)
 
 	go func() {
 		defer wg.Done()
