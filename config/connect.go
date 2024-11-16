@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func connectPostgresql(migrate bool) error {
+func connectPostgresql(_ bool) error {
 	var err error
 	dns := fmt.Sprintf(
 		`
@@ -27,14 +27,6 @@ func connectPostgresql(migrate bool) error {
 	)
 
 	dbPsql, err = gorm.Open(postgres.Open(dns), &gorm.Config{})
-
-	if migrate {
-		errMigrate := dbPsql.AutoMigrate()
-
-		if errMigrate != nil {
-			return errMigrate
-		}
-	}
 
 	return err
 }
