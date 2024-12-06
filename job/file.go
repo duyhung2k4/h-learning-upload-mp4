@@ -35,6 +35,7 @@ func (j *fileJob) DeleteFileMp4() {
 		listUuid = append(listUuid, uuid)
 	}
 
+	// job delete video
 	var listVideoLession []model.VideoLession
 	err = j.psql.
 		Model(&model.VideoLession{}).

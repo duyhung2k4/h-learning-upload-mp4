@@ -1,17 +1,20 @@
 package router
 
 import (
+	"app/config"
 	"app/controller"
+	"app/middlewares"
 	"net/http"
 	"os"
 	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/go-chi/render"
 )
 
 func apiV1(router chi.Router) {
-	// middlewares := middlewares.NewMiddlewares()
+	middlewares := middlewares.NewMiddlewares()
 
 	videoController := controller.NewVideoController()
 
@@ -25,8 +28,8 @@ func apiV1(router chi.Router) {
 	})
 
 	router.Route("/protected", func(protected chi.Router) {
-		// protected.Use(jwtauth.Verifier(config.GetJWT()))
-		// protected.Use(middlewares.ValidateExpAccessToken())
+		protected.Use(jwtauth.Verifier(config.GetJWT()))
+		protected.Use(middlewares.ValidateExpAccessToken())
 
 		protected.Route("/video", func(video chi.Router) {
 			video.Post("/upload", videoController.Upload)

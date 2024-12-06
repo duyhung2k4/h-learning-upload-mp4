@@ -44,6 +44,7 @@ func (c *videoController) Upload(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
 
+	// push mess to queue with quantity
 	queues := []constant.QUEUE_QUANTITY{
 		constant.QUEUE_MP4_360_P,
 		// constant.QUEUE_MP4_480_P,
