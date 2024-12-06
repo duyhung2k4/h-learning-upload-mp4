@@ -55,7 +55,6 @@ func (c *videoController) Upload(w http.ResponseWriter, r *http.Request) {
 		wg.Add(1)
 		go func(q constant.QUEUE_QUANTITY) {
 			defer wg.Done()
-			log.Println(q)
 			err := c.videoService.SendMessQueueQuantity(q, videoPayload.Uuid)
 			if err != nil {
 				mutex.Lock()
