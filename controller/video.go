@@ -3,7 +3,9 @@ package controller
 import (
 	"app/constant"
 	"app/dto/request"
+	"app/model"
 	"app/service"
+	"app/utils"
 	"encoding/json"
 	"errors"
 	"log"
@@ -15,6 +17,8 @@ import (
 
 type videoController struct {
 	videoService service.VideoService
+	jwtUtils     utils.JwtUtils
+	queryService service.QueryService[model.VideoLession]
 }
 
 type VideoController interface {
@@ -27,6 +31,38 @@ func (c *videoController) Upload(w http.ResponseWriter, r *http.Request) {
 	err := json.Unmarshal([]byte(metadata), &videoPayload)
 	if err != nil {
 		InternalServerError(w, r, err)
+		return
+	}
+
+	profileId, err := c.jwtUtils.GetProfileId(r)
+	if err != nil {
+		InternalServerError(w, r, err)
+		return
+	}
+
+	videoLession, err := c.queryService.First(request.QueryReq[model.VideoLession]{
+		Joins: []string{
+			"JOIN lessions AS l ON l.id = video_lessions.lession_id",
+			"JOIN courses AS c ON c.id = l.course_id",
+		},
+		Condition: `
+			video_lessions.code = ?
+			AND l.id = ?
+			AND c.create_id = ?
+		`,
+		Args: []interface{}{
+			videoPayload.Uuid,
+			videoPayload.LessionId,
+			profileId,
+		},
+	})
+	if err != nil {
+		InternalServerError(w, r, err)
+		return
+	}
+
+	if videoLession.Url360p != nil {
+		InternalServerError(w, r, errors.New("video uploaded"))
 		return
 	}
 
@@ -86,5 +122,7 @@ func (c *videoController) Upload(w http.ResponseWriter, r *http.Request) {
 func NewVideoController() VideoController {
 	return &videoController{
 		videoService: service.NewVideoService(),
+		jwtUtils:     utils.NewJwtUtils(),
+		queryService: service.NewQueryService[model.VideoLession](),
 	}
 }
