@@ -28,7 +28,7 @@ func (s *queryService[T]) First(payload request.QueryReq[T]) (*T, error) {
 	var item *T
 	var personOmit []string
 
-	query := s.psql
+	query := s.psql.Debug()
 
 	for key, omitChild := range payload.Omit {
 		if len(omitChild) == 0 {
