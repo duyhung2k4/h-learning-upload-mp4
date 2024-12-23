@@ -1,10 +1,10 @@
 package queue
 
 import (
-	"app/config"
-	"app/constant"
-	queuepayload "app/dto/queue_payload"
-	"app/service"
+	"app/cmd/upload-mp4-service/service"
+	"app/internal/connection"
+	constant "app/internal/constants"
+	queuepayload "app/internal/dto/queue_payload"
 	"encoding/json"
 	"log"
 
@@ -12,7 +12,7 @@ import (
 )
 
 type queueFileDeleteMp4 struct {
-	videoService service.VideoService
+	service service.Service
 }
 
 type QueueFileDeleteMp4 interface {
@@ -20,7 +20,7 @@ type QueueFileDeleteMp4 interface {
 }
 
 func (q *queueFileDeleteMp4) Worker() {
-	conn := config.GetRabbitmq()
+	conn := connection.GetRabbitmq()
 	ch, err := conn.Channel()
 	if err != nil {
 		log.Println("error chanel: ", err)
@@ -65,7 +65,7 @@ func (q *queueFileDeleteMp4) Worker() {
 				return
 			}
 
-			err = q.videoService.DeleteVideoMp4(payload)
+			err = q.service.VideoService.DeleteVideoMp4(payload)
 			if err != nil {
 				log.Println("error delete file: ", err)
 				mess.Reject(true)
@@ -79,6 +79,6 @@ func (q *queueFileDeleteMp4) Worker() {
 
 func NewQueueFileM3U8() QueueFileDeleteMp4 {
 	return &queueFileDeleteMp4{
-		videoService: service.NewVideoService(),
+		service: service.Register(),
 	}
 }

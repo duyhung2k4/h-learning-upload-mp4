@@ -1,33 +1,21 @@
 package main
 
 import (
-	"app/config"
-	"app/job"
-	"app/router"
-	"log"
-	"net/http"
+	"app/cmd/upload-mp4-service/initialize"
+	"app/internal/connection"
 	"sync"
 )
 
 func main() {
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(1)
 
 	go func() {
 		defer wg.Done()
-		server := &http.Server{
-			Addr:           ":" + config.GetAppPort(),
-			Handler:        router.AppRouter(),
-			MaxHeaderBytes: 1 << 20,
-		}
-
-		log.Fatalln(server.ListenAndServe())
-	}()
-
-	go func() {
-		defer wg.Done()
-		job.InitJob()
+		initialize.Run()
 	}()
 
 	wg.Wait()
+
+	connection.DeferFunc()
 }

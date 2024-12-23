@@ -1,8 +1,8 @@
-package job
+package jobapp
 
 import (
-	"app/config"
-	"app/model"
+	"app/internal/connection"
+	"app/internal/entity"
 	"fmt"
 	"log"
 	"os"
@@ -20,7 +20,7 @@ type FileJob interface {
 }
 
 func (j *fileJob) DeleteFileMp4() {
-	listFile, err := os.ReadDir("video")
+	listFile, err := os.ReadDir("cmd/upload-mp4-service/data/video")
 	if err != nil {
 		log.Println("error get list file: ", err)
 		return
@@ -36,9 +36,9 @@ func (j *fileJob) DeleteFileMp4() {
 	}
 
 	// job delete video
-	var listVideoLession []model.VideoLession
+	var listVideoLession []entity.VideoLession
 	err = j.psql.
-		Model(&model.VideoLession{}).
+		Model(&entity.VideoLession{}).
 		Where(`
 			code IN ?
 			AND url360p IS NOT NULL
@@ -51,7 +51,7 @@ func (j *fileJob) DeleteFileMp4() {
 
 	listError := []error{}
 	for _, v := range listVideoLession {
-		path := fmt.Sprintf("video/%s.mp4", v.Code)
+		path := fmt.Sprintf("cmd/upload-mp4-service/data/video/%s.mp4", v.Code)
 		err := os.RemoveAll(path)
 		if err != nil {
 			listError = append(listError, err)
@@ -69,6 +69,6 @@ func (j *fileJob) DeleteFileMp4() {
 
 func NewFileJob() FileJob {
 	return &fileJob{
-		psql: config.GetPsql(),
+		psql: connection.GetPsql(),
 	}
 }
