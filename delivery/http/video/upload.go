@@ -65,6 +65,14 @@ func (h *videoHandle) Upload(ctx *gin.Context) {
 		return
 	}
 
+	ctx.Set("video_lession_id", videoLession.ID)
+	err = h.service.VideoService.ChangeStatus(ctx, entity.VIDEO_LESSION_PENDING)
+	if err != nil {
+		httpresponse.InternalServerError(ctx, err)
+		logapp.Logger("change-status", err.Error(), constant.ERROR_LOG)
+		return
+	}
+
 	listErr := []error{}
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
