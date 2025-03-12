@@ -20,7 +20,7 @@ type FileJob interface {
 }
 
 func (j *fileJob) DeleteFileMp4() {
-	listFile, err := os.ReadDir("cmd/upload-mp4-service/data/video")
+	listFile, err := os.ReadDir("data/mp4")
 	if err != nil {
 		log.Println("error get list file: ", err)
 		return
@@ -51,7 +51,7 @@ func (j *fileJob) DeleteFileMp4() {
 
 	listError := []error{}
 	for _, v := range listVideoLession {
-		path := fmt.Sprintf("cmd/upload-mp4-service/data/video/%s.mp4", v.Code)
+		path := fmt.Sprintf("data/mp4/%s.mp4", v.Code)
 		err := os.RemoveAll(path)
 		if err != nil {
 			listError = append(listError, err)

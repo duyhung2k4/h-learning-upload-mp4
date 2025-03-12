@@ -18,7 +18,7 @@ func (s *videoService) CreateVideo(ctx *gin.Context, payload requestdata.InfoVid
 
 	fileName := fmt.Sprintf("%s.mp4", payload.Uuid)
 
-	outFile, err := os.Create("cmd/upload-mp4-service/data/video/" + fileName)
+	outFile, err := os.Create("data/mp4/" + fileName)
 	if err != nil {
 		return err
 	}
